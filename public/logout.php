@@ -1,4 +1,3 @@
-=== public/logout.php ===
 <?php
 
 require __DIR__ . '/../src/config.php';
