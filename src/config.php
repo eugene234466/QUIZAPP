@@ -1,14 +1,15 @@
 <?php 
-function load_env($path){
-    if (!file_exists($path)){
-        die("Missing .env file - copy .env.example to .env and fill it in");
+function load_env($path) {
+    if (!file_exists($path)) {
+        return;   // no .env file — assume env vars are set by the platform (e.g. Render)
     }
-    foreach (file($path) as $line){
-        $line =trim($line);
-        if(empty($line) || $line[0] == '#'){
+
+    foreach (file($path) as $line) {
+        $line = trim($line);
+        if (empty($line) || $line[0] == '#') {
             continue;
         }
-        if(strpos($line, '=') === false){
+        if (strpos($line, '=') === false) {
             continue;
         }
         list($key, $value) = explode('=', $line, 2);
