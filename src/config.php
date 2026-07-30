@@ -1,5 +1,7 @@
 <?php 
 
+ob_start();
+
 function load_env($path) {
     if (!file_exists($path)) {
         return;   // no .env file — assume env vars are set by the platform (e.g. Render)
