@@ -1,5 +1,3 @@
-=== Dockerfile (project root) ===
-
 FROM php:8.2-cli
 
 # install curl extension (curl_* functions need this)
