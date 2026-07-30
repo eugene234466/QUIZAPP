@@ -1,7 +1,7 @@
 <?php
 
-require_once __DIR__ . '/../src/config.php';
-require_once __DIR__ . '/../src/Auth/SupabaseAuth.php';
+require __DIR__ . '/../src/config.php';
+require __DIR__ . '/../src/Auth/SupabaseAuth.php';
 
 SupabaseAuth::require_auth();
 
