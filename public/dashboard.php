@@ -10,7 +10,7 @@ SupabaseAuth::require_auth();
 $flash_error = $_SESSION['flash_error'] ?? null;
 unset($_SESSION['flash_error']);
 
-$topics = ["Language", "Math", "Science", "Geography", "History", "Sports", "Pop Culture", "Engineering", "Politics"];
+$topics = ["Language", "Math", "Science", "Geography", "History", "Sports", "Pop Culture", "Engineering", "Politics", "Signals & Systems", "DSA"];
 
 ?>
 <!DOCTYPE html>
