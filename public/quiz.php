@@ -12,7 +12,7 @@ SupabaseAuth::require_auth();
 
 $topic = $_GET['topic'] ?? null;
 
-$valid_topics = ["Language", "Math", "Science","Geography","History","Sports", "Pop Culture", "Engineering","Politics"];
+$valid_topics = ["Language", "Math", "Science","Geography","History","Sports", "Pop Culture", "Engineering","Politics","Signals & Sytems","DSA"];
 if ($topic === null || !in_array($topic, $valid_topics)) {
     $_SESSION['flash_error'] = 'Please select a valid topic';
     header('Location: /dashboard.php');
