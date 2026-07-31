@@ -1,47 +1,74 @@
 <?php
 
-require_once __DIR__ . '/../src/config.php';
-require_once __DIR__ . '/../src/Auth/SupabaseAuth.php';
+require __DIR__ . '/../src/config.php';
+require __DIR__ . '/../src/Auth/SupabaseAuth.php';
 
-SupabaseAuth::require_auth();
-
-$result = $_SESSION["last_result"] ?? null;
-$was_saved = $_SESSION["last_result_saved"] ?? true;
-
-if ($result === null) {
+if (SupabaseAuth::is_logged_in()) {
     header('Location: /dashboard.php');
     exit;
 }
 
-unset($_SESSION['last_result']);
-unset($_SESSION['last_result_saved']);
+$error = null;
+$success = false;
 
-$percentage = round(($result["score"] / $result["total_questions"]) * 100);
-$time_display = floor($result["time_taken_sec"] / 60) . ":" . str_pad($result["time_taken_sec"] % 60, 2, '0', STR_PAD_LEFT);
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $email = $_POST['email'] ?? '';
+    $password = $_POST['password'] ?? '';
+    $confirm_password = $_POST['confirm_password'] ?? '';
+
+    if ($email === '' || $password === '') {
+        $error = 'Email and password are required';
+    } elseif ($password !== $confirm_password) {
+        $error = 'Passwords do not match';
+    } elseif (strlen($password) < 6) {
+        $error = 'Password must be at least 6 characters';
+    } else {
+        try {
+            SupabaseAuth::sign_up($email, $password);
+            $success = true;
+        } catch (Exception $e) {
+            error_log("Signup failed: " . $e->getMessage());
+            $error = 'Could not create account — email may already be in use';
+        }
+    }
+}
 
 ?>
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Results</title>
+    <title>Sign Up</title>
     <link rel="stylesheet" href="/assets/css/style.css">
 </head>
 <body>
 
-<div class="result-card">
-    <p class="result-eyebrow"><?php echo htmlspecialchars($result["topic"]); ?> quiz complete</p>
-    <div class="result-score"><?php echo htmlspecialchars($result['score']); ?>/<?php echo htmlspecialchars($result['total_questions']); ?></div>
-    <p class="result-subline"><?php echo htmlspecialchars($percentage); ?>% correct · finished in <?php echo htmlspecialchars($time_display); ?></p>
+<h1>Sign Up</h1>
 
-    <?php if (!$was_saved): ?>
-        <p class="result-warning">This result couldn't be saved to your history</p>
+<?php if ($success): ?>
+    <p>Account created! Check your email to confirm your address before logging in.</p>
+    <p><a href="/login.php">Go to login</a></p>
+<?php else: ?>
+
+    <?php if ($error): ?>
+        <p class="error"><?php echo htmlspecialchars($error); ?></p>
     <?php endif; ?>
 
-    <div class="result-actions">
-        <a href="/dashboard.php" class="primary">Play again</a>
-        <a href="/history.php" class="secondary">View history</a>
-    </div>
-</div>
+    <form method="POST" action="/signup.php">
+        <label>Email
+            <input type="email" name="email" required>
+        </label><br>
+        <label>Password
+            <input type="password" name="password" required minlength="6">
+        </label><br>
+        <label>Confirm Password
+            <input type="password" name="confirm_password" required minlength="6">
+        </label><br>
+        <button type="submit">Sign Up</button>
+    </form>
+
+    <p>Already have an account? <a href="/login.php">Log in</a></p>
+
+<?php endif; ?>
 
 </body>
 </html>
